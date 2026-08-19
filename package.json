@@ -1,0 +1,25 @@
+{
+  "name": "dsh-session-pins",
+  "version": "0.1.0",
+  "description": "Pin DSH Web UI sessions from their existing overflow menu.",
+  "license": "MIT",
+  "private": false,
+  "author": "JINGMINGRUO",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JINGMINGRUO/dsh-session-pins.git"
+  },
+  "homepage": "https://github.com/JINGMINGRUO/dsh-session-pins",
+  "bugs": {
+    "url": "https://github.com/JINGMINGRUO/dsh-session-pins/issues"
+  },
+  "type": "commonjs",
+  "scripts": {
+    "check": "node --check patch/dsh-session-pins-patch.cjs && node --check patch/dsh-session-pins-presentation-patch.cjs",
+    "patch": "node patch/dsh-session-pins-patch.cjs",
+    "patch:presentation": "node patch/dsh-session-pins-presentation-patch.cjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
