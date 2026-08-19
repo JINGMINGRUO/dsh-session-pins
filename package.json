@@ -1,7 +1,7 @@
 {
   "name": "dsh-session-pins",
   "version": "0.1.0",
-  "description": "Pin DSH Web UI sessions from their existing overflow menu.",
+  "description": "为 DeepSeek Harness Web UI 添加会话置顶功能",
   "license": "MIT",
   "private": false,
   "author": "JINGMINGRUO",

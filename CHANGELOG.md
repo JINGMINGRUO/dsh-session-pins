@@ -1,8 +1,9 @@
-# Changelog
+# 更新记录
 
 ## 0.1.0
 
-- Add per-session pin/unpin actions to the existing DSH overflow menu.
-- Persist pinned session IDs in localStorage.
-- Render pinned sessions before workspace groups and in the flat list.
-- Add the Chinese “置顶会话” presentation and a workspace-aligned pin icon.
+- 在 DSH 会话原有三点菜单中加入「置顶会话 / 取消置顶会话」。
+- 使用 localStorage 持久化置顶会话 ID。
+- 在工作区分组和单列表两种视图中把置顶会话显示在最前面。
+- 增加置顶菜单图标和左侧栏置顶区块。
+- 补充中文为主的使用说明、兼容性说明和社区调研记录。
