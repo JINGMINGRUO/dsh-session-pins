@@ -17,6 +17,24 @@
 
 ## 安装与使用
 
+### 通过 npm 安装
+
+发布到 npm 后，可以先安装补丁脚本：
+
+```powershell
+npm install dsh-session-pins
+```
+
+然后执行两个补丁（顺序不能反）：
+
+```powershell
+node node_modules/dsh-session-pins/patch/dsh-session-pins-patch.cjs "C:\path\to\dsh-client-ui-workspace\lib\client.js"
+node node_modules/dsh-session-pins/patch/dsh-session-pins-presentation-patch.cjs "C:\path\to\dsh-client-ui-workspace\lib\client.js"
+```
+
+- npm 包只包含补丁脚本和说明文档，不包含 DSH 官方编译文件。
+- 补丁不会自动执行，必须明确传入目标 `client.js` 路径。
+
 ### 环境要求
 
 - 已安装 DeepSeek Harness Web UI。

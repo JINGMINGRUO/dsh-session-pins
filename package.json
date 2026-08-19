@@ -19,6 +19,23 @@
     "patch": "node patch/dsh-session-pins-patch.cjs",
     "patch:presentation": "node patch/dsh-session-pins-presentation-patch.cjs"
   },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "docs",
+    "patch"
+  ],
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "session",
+    "pin",
+    "workspace"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   }
