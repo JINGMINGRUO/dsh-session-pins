@@ -1,51 +1,54 @@
-# DSH 会话置顶插件
+# DSH Session Pins
 
-[npm 包主页](https://www.npmjs.com/package/dsh-session-pins) · [GitHub 仓库](https://github.com/JINGMINGRUO/dsh-session-pins)
+[npm 安装页](https://www.npmjs.com/package/dsh-session-pins) · [问题反馈](https://github.com/JINGMINGRUO/dsh-session-pins/issues)
 
-为 DeepSeek Harness（简称 DSH）Web UI 增加类似 Codex 的「置顶会话」功能。现在它是一个可安装的 DSH Web UI 插件，不需要直接修改 DSH 官方编译文件。
+给 DeepSeek Harness（DSH）侧边栏增加“置顶会话”功能。把常用会话放到列表最上方，不会随着原工作区折叠而折叠。
 
-> 项目名称：DSH Session Pins。`pins` 指“置顶会话”，不是绘画或图片功能。
-
-## 功能
-
-- 在会话原有的三点菜单中加入「置顶会话 / 取消置顶会话」。
-- 在工作区会话列表顶部显示带置顶图标的「置顶会话」区块。
-- 置顶会话在普通工作区和单列表模式中都显示在前面。
-- 优先使用 DSH host 持久化置顶会话 ID，跨浏览器、刷新页面、重启 DSH 和更新 DSH 后仍然保留。
-- 首次升级时会把旧版浏览器 `localStorage` 中的置顶列表迁移到 DSH host；浏览器存储只作为兼容缓存。
-- 支持多标签页通过浏览器 `storage` 事件同步置顶状态。
-- 插件卸载时会移除自身 DOM、样式和监听器，不删除 DSH host 中已经保存的置顶列表。
+置顶状态保存在 DSH 本机，不依赖某一个浏览器：换浏览器、清除网页缓存、重启 DSH 或更新 DSH 后，置顶会话仍会保留。
 
 ## 安装
 
-### 从 npm Registry 安装（推荐）
-
-插件发布后，在 PowerShell 或终端执行：
+在 PowerShell 中执行：
 
 ```powershell
 dsh plugin --profile web add dsh-session-pins
 ```
 
-该命令会把 npm 包加入 DSH 的 `web` profile。安装完成后必须重启 `dsh web`，单纯刷新页面不会重新组合 profile。
-
-如果只想把包安装到普通 Node.js 项目中，也可以使用：
+然后重启 DSH Web 服务：
 
 ```powershell
-npm install dsh-session-pins
+dsh web
 ```
 
-但单独执行 `npm install` 不会自动把插件挂载到 DSH profile；在 DSH 中使用上一条 `dsh plugin` 命令更合适。
+重新打开 DSH 页面后即可使用。只刷新网页不足以载入新插件，因此安装或升级后需要重启 `dsh web`。
 
-### 从 GitHub 本地开发安装
+## 使用方法
+
+1. 在侧边栏找到需要保留在顶部的会话。
+2. 点击会话右侧的三个点。
+3. 点击“置顶会话”。
+4. 该会话会出现在侧边栏顶部的“置顶会话”区域。
+
+需要取消时，在同一位置点击“取消置顶会话”即可。点击置顶区域中的会话，和点击原会话一样，会直接打开该会话。
+
+## 安装后如何确认
+
+安装完成并重启 DSH 后，任意会话的三个点菜单中应出现“置顶会话”。置顶一个会话后：
+
+- 它会显示在侧边栏顶部。
+- 折叠它原本所在的工作区后，它仍会留在顶部。
+- 关闭浏览器、换一个浏览器或重启 DSH 后，它仍会被置顶。
+
+## 更新
+
+执行下面两条命令，然后重启 `dsh web`：
 
 ```powershell
-git clone https://github.com/JINGMINGRUO/dsh-session-pins.git
-cd dsh-session-pins
-npm run build
-dsh plugin --profile web add link:E:/path/to/dsh-session-pins
+dsh plugin --profile web add dsh-session-pins
+dsh web
 ```
 
-请将最后一行的路径替换成实际仓库路径。重新构建后重启 `dsh web`。
+插件会保留你已有的置顶列表。
 
 ## 卸载
 
@@ -53,41 +56,37 @@ dsh plugin --profile web add link:E:/path/to/dsh-session-pins
 dsh plugin --profile web remove dsh-session-pins
 ```
 
-卸载后重启 `dsh web`。DSH host 中已经保存的置顶列表不会被插件卸载删除；如果以后重新安装同一插件，仍可读取。浏览器兼容缓存可以在 DSH 页面的开发者控制台清除：
+卸载后重启 `dsh web`。已保存的置顶列表不会被删除；以后重新安装插件时会自动恢复。
 
-```js
-localStorage.removeItem("dsh.workspace.pinnedSessions.v1")
-```
+## 常见问题
 
-## 数据和隐私
+### 安装后看不到“置顶会话”
 
-置顶会话 ID 保存在 DSH 用户目录下的 `dsh-session-pins.json`，浏览器 `localStorage` 的 `dsh.workspace.pinnedSessions.v1` 只作为兼容缓存和旧数据迁移来源。插件只保存会话 ID，不保存标题、消息或会话内容，不修改 Host 会话账本，也不包含 DSH 官方编译文件。清除浏览器站点数据不会删除 DSH host 中的置顶状态。
+先确认已经重启 `dsh web`，再完全关闭并重新打开 DSH 页面。若仍然没有，请在 [GitHub Issues](https://github.com/JINGMINGRUO/dsh-session-pins/issues) 提交问题，并附上 DSH 版本和侧边栏截图。
 
-## 为什么使用 DOM 扩展
+### 换浏览器后置顶会话会不会消失？
 
-DSH 官方侧边栏的 `sidebar.workspaces` 是单占用槽位，已经由官方 Workspace 插件使用；会话行菜单目前也没有对外开放的菜单项槽位。因此插件采用 DSH 官方支持的客户端插件生命周期，在浏览器端使用隔离的 `data-dsh-session-pins-*` 标记和 `MutationObserver` 扩展现有 DOM：
+不会。置顶列表保存在 DSH 的本机用户数据中，而不是只保存在浏览器里。
 
-- 不修改 `@deepseek-ai/dsh-client-ui-workspace/lib/client.js`。
-- React 重绘侧边栏后，插件会自动重新挂载置顶区块和菜单项。
-- 插件停止或卸载时会恢复被隐藏的普通会话行。
-- 会话 ID 来自 DSH 的 `sessions` 客户端运行时；DOM 只负责呈现和交互。
+### 清掉浏览器缓存会不会消失？
 
-架构细节见 [插件架构说明](docs/PLUGIN-ARCHITECTURE.md)。
+不会。浏览器缓存只用于兼容和迁移；正式数据由 DSH 保存。
 
-## 兼容性和注意事项
+### 可以只用 npm install 吗？
 
-插件面向 DSH `0.1.0-rc.8` 的客户端运行时和 Workspace UI。由于官方 UI 的无障碍标签或 DOM 结构可能随版本变化，升级 DSH 后请检查置顶区块和三点菜单。如果插件无法识别某个会话，会保留官方会话列表，不会阻止 DSH 启动。
+不建议。`npm install dsh-session-pins` 只会把包下载到 Node.js 项目，不会把插件装入 DSH。请使用上面的 `dsh plugin --profile web add dsh-session-pins` 命令。
 
-`legacy-patch/` 中保留旧版手工 bundle 补丁，仅用于已经使用旧方案的用户迁移；新的安装方式不应执行这些脚本。
+## 数据与隐私
 
-## 开发与检查
+插件只保存“哪些会话被置顶”的会话 ID，不保存会话标题、消息或会话内容，也不修改 DSH 的会话记录。
 
-```powershell
-npm run check
-```
+## 开发者信息
 
-`npm run check` 会重新生成 `lib` 客户端入口，检查源代码、浏览器模块、Host 入口和旧版迁移脚本的 Node.js 语法。
+- [更新记录](CHANGELOG.md)
+- [插件架构说明](docs/PLUGIN-ARCHITECTURE.md)
+- [社区调研](docs/COMMUNITY-RESEARCH.md)
+- [npm 包主页](https://www.npmjs.com/package/dsh-session-pins)
 
 ## 许可证
 
-MIT。
+MIT
