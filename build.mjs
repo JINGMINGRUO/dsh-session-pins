@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.dirname(fileURLToPath(import.meta.url))
-const source = fs.readFileSync(path.join(root, 'src', 'client.js'), 'utf8').trim()
+const source = fs.readFileSync(path.join(root, 'src', 'client.js'), 'utf8').replace(/\r\n?/g, '\n').trim()
 const client = [
   'window.__ModuleLoader__.load({id:"dsh-session-pins",factory:function(require){',
   '"use strict";',
