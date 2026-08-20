@@ -1,5 +1,7 @@
 # DSH 会话置顶插件
 
+[npm 包主页](https://www.npmjs.com/package/dsh-session-pins) · [GitHub 仓库](https://github.com/JINGMINGRUO/dsh-session-pins)
+
 为 DeepSeek Harness（简称 DSH）Web UI 增加类似 Codex 的「置顶会话」功能。现在它是一个可安装的 DSH Web UI 插件，不需要直接修改 DSH 官方编译文件。
 
 > 项目名称：DSH Session Pins。`pins` 指“置顶会话”，不是绘画或图片功能。
