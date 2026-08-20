@@ -1,6 +1,6 @@
 {
   "name": "dsh-session-pins",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "DeepSeek Harness Web UI 插件：为会话增加置顶与取消置顶功能",
   "license": "MIT",
   "private": false,

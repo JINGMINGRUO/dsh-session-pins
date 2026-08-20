@@ -9,9 +9,10 @@
 - 在会话原有的三点菜单中加入「置顶会话 / 取消置顶会话」。
 - 在工作区会话列表顶部显示带置顶图标的「置顶会话」区块。
 - 置顶会话在普通工作区和单列表模式中都显示在前面。
-- 使用浏览器 `localStorage` 持久化置顶会话 ID，刷新页面和重启 DSH 后仍然保留。
+- 优先使用 DSH host 持久化置顶会话 ID，跨浏览器、刷新页面、重启 DSH 和更新 DSH 后仍然保留。
+- 首次升级时会把旧版浏览器 `localStorage` 中的置顶列表迁移到 DSH host；浏览器存储只作为兼容缓存。
 - 支持多标签页通过浏览器 `storage` 事件同步置顶状态。
-- 插件卸载时会移除自身 DOM、样式和监听器，不修改 DSH 服务端数据。
+- 插件卸载时会移除自身 DOM、样式和监听器，不删除 DSH host 中已经保存的置顶列表。
 
 ## 安装
 
@@ -50,7 +51,7 @@ dsh plugin --profile web add link:E:/path/to/dsh-session-pins
 dsh plugin --profile web remove dsh-session-pins
 ```
 
-卸载后重启 `dsh web`。浏览器中已经保存的置顶列表不会被远程删除；如果以后重新安装同一插件，仍可读取。要清除列表，请在 DSH 页面的开发者控制台执行：
+卸载后重启 `dsh web`。DSH host 中已经保存的置顶列表不会被插件卸载删除；如果以后重新安装同一插件，仍可读取。浏览器兼容缓存可以在 DSH 页面的开发者控制台清除：
 
 ```js
 localStorage.removeItem("dsh.workspace.pinnedSessions.v1")
@@ -58,7 +59,7 @@ localStorage.removeItem("dsh.workspace.pinnedSessions.v1")
 
 ## 数据和隐私
 
-置顶会话 ID 只保存在当前网站源的浏览器 `localStorage` 中，键名为 `dsh.workspace.pinnedSessions.v1`。插件不上传置顶列表、不修改 Host 会话账本，也不包含 DSH 官方编译文件。清除浏览器站点数据会清空置顶状态。
+置顶会话 ID 保存在 DSH 用户目录下的 `dsh-session-pins.json`，浏览器 `localStorage` 的 `dsh.workspace.pinnedSessions.v1` 只作为兼容缓存和旧数据迁移来源。插件只保存会话 ID，不保存标题、消息或会话内容，不修改 Host 会话账本，也不包含 DSH 官方编译文件。清除浏览器站点数据不会删除 DSH host 中的置顶状态。
 
 ## 为什么使用 DOM 扩展
 

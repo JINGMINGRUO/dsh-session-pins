@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.3.0
+
+- 将置顶列表持久化到 DSH 用户目录的 `dsh-session-pins.json`，跨浏览器、刷新、重启和 DSH 更新保留。
+- 保留浏览器 `localStorage` 作为兼容缓存；首次运行时会把旧浏览器置顶数据迁移到 DSH host。
+- 新增 host 端 `/api/dsh-session-pins` 路由，使用临时文件加原子重命名写入。
+
 ## 0.2.0
 
 - 将会话置顶功能改造成可安装的 DSH Web UI 客户端插件。

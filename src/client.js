@@ -4,6 +4,7 @@ const name = 'dsh-session-pins'
 const inject = ['sessions']
 
 const STORAGE_KEY = 'dsh.workspace.pinnedSessions.v1'
+const REMOTE_PATH = '/api/dsh-session-pins'
 const STYLE_ID = 'dsh-session-pins-style'
 const SECTION_ATTR = 'data-dsh-session-pins-section'
 const ROW_ATTR = 'data-dsh-session-pins-row'
@@ -50,10 +51,22 @@ function readPinned() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     const value = raw === null ? [] : JSON.parse(raw)
-    if (!Array.isArray(value)) return []
-    return value.filter((id) => typeof id === 'string' && id.length > 0 && id.length < 512).slice(0, 500)
+    return normalizePinned(value)
   } catch {
     return []
+  }
+}
+
+function normalizePinned(value) {
+  const list = Array.isArray(value) ? value : []
+  return [...new Set(list.filter((id) => typeof id === 'string' && id.length > 0 && id.length < 512))].slice(0, 500)
+}
+
+function writePinned(value) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalizePinned(value)))
+  } catch {
+    // Private browsing or storage policy can reject persistence.
   }
 }
 
@@ -80,6 +93,7 @@ class SessionPinsController {
     this.section = undefined
     this.customMenu = undefined
     this.observer = undefined
+    this.remoteSaveQueue = Promise.resolve()
     this.scheduled = false
     this.stopped = false
     this.onStorage = (event) => {
@@ -107,6 +121,7 @@ class SessionPinsController {
       this.observer.observe(observerTarget, { childList: true, subtree: true })
     }
     this.schedule()
+    void this.loadRemote()
   }
 
   stop() {
@@ -131,6 +146,37 @@ class SessionPinsController {
     style.id = STYLE_ID
     style.textContent = STYLE_TEXT
     document.head?.append(style)
+  }
+
+  async loadRemote() {
+    try {
+      const response = await window.fetch(REMOTE_PATH, { headers: { accept: 'application/json' } })
+      if (!response.ok) throw new Error('dsh-session-pins: durable read failed with ' + response.status)
+      const payload = await response.json()
+      const remotePinned = normalizePinned(payload?.pinned)
+      if (payload?.exists === false && this.pinned.length > 0) {
+        await this.saveRemote(this.pinned)
+      } else {
+        this.pinned = remotePinned
+        writePinned(this.pinned)
+      }
+    } catch {
+      // Keep the browser-local state as a compatibility fallback when the host route is unavailable.
+    }
+    this.schedule()
+  }
+
+  saveRemote(value) {
+    const pinned = normalizePinned(value)
+    this.remoteSaveQueue = this.remoteSaveQueue.then(async () => {
+      const response = await window.fetch(REMOTE_PATH, {
+        method: 'PUT',
+        headers: { accept: 'application/json', 'content-type': 'application/json' },
+        body: JSON.stringify({ pinned })
+      })
+      if (!response.ok) throw new Error('dsh-session-pins: durable write failed with ' + response.status)
+    }).catch(() => {})
+    return this.remoteSaveQueue
   }
 
   getSnapshot() {
@@ -452,11 +498,8 @@ class SessionPinsController {
     if (next.has(id)) next.delete(id)
     else next.add(id)
     this.pinned = Array.from(next)
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.pinned))
-    } catch {
-      // Private browsing or storage policy can reject persistence; the current tab still updates.
-    }
+    writePinned(this.pinned)
+    void this.saveRemote(this.pinned)
     this.schedule()
   }
 }
