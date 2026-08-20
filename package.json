@@ -1,7 +1,7 @@
 {
   "name": "dsh-session-pins",
-  "version": "0.1.0",
-  "description": "为 DeepSeek Harness Web UI 添加会话置顶功能",
+  "version": "0.2.0",
+  "description": "DeepSeek Harness Web UI 插件：为会话增加置顶与取消置顶功能",
   "license": "MIT",
   "private": false,
   "author": "JINGMINGRUO",
@@ -13,22 +13,41 @@
   "bugs": {
     "url": "https://github.com/JINGMINGRUO/dsh-session-pins/issues"
   },
-  "type": "commonjs",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "platform": "web"
+    }
+  },
   "scripts": {
-    "check": "node --check patch/dsh-session-pins-patch.cjs && node --check patch/dsh-session-pins-presentation-patch.cjs",
-    "patch": "node patch/dsh-session-pins-patch.cjs",
-    "patch:presentation": "node patch/dsh-session-pins-presentation-patch.cjs"
+    "build": "node build.mjs",
+    "check": "npm run build && node --check src/client.js && node --check lib/client.js && node --check lib/index.js && node --check legacy-patch/dsh-session-pins-patch.cjs && node --check legacy-patch/dsh-session-pins-presentation-patch.cjs",
+    "prepack": "node build.mjs"
   },
   "files": [
+    "lib",
+    "cordis.patch.yml",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
-    "docs",
-    "patch"
+    "docs"
   ],
   "keywords": [
     "deepseek-harness",
     "dsh",
+    "client-plugin",
     "session",
     "pin",
     "workspace"

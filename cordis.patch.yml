@@ -1,0 +1,5 @@
+# dsh-session-pins profile bundle patch: add the native browser plugin to the web roster.
+# Install with: dsh plugin --profile web add dsh-session-pins
+- insert:
+    - id: ui-session-pins
+      name: 'dsh-session-pins'
